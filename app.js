@@ -1,6 +1,6 @@
 //jshint esversion:6
-import express from "express"
 
+const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Razorpay = require("razorpay");

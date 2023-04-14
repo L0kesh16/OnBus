@@ -207,15 +207,15 @@ app.get("/service",function(req,res){
 })
 app.get("/home",function(req,res){ 
 
-    res.sendFile(__dirname+"/public/html/Home.html")
+    res.render("Home");
 })
 app.get("/login",function(req,res)
 {
-    res.sendFile(__dirname+"/public/html/Login.html");
+    res.render("login");
 })
 app.get("/Register",function(req,res)
 {
-    res.sendFile(__dirname+"/public/html/Register.html");
+    res.render("Register");
 })
 
 

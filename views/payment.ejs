@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.3.js"
+        integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+    <title>OnBus</title>
+</head>
+
+<body style="background-color: #f45454;">
+    <div class="header-blue">
+        <nav class="navbar navbar-light navbar-expand-md navigation-clean-search">
+            <div class="container-fluid"><h1 class="navbar-brand text-white m-1 " >BUS TICKET   </h1>
+               
+                    <ul class="nav navbar-nav ml-5 ">
+                        <li class="nav-item" role="presentation"><a class="nav-link text-white  m-1  "  href="/">HOME</a></li>
+                    
+                        
+                    </ul>  
+                
+            </div>
+        </nav>
+       
+    </div>
+    <section class="vh-100" >
+        <div class="h-100 ">
+            <div class="row d-flex justify-content-center align-items-center p-5">
+                <div class="col-lg-12 col-xl-7">
+                    <div class="card text-black" style="border-radius: 25px;">
+                        <div class="card-body p-md-5">
+                            <div class="row justify-content-center">
+                                <div class="col-md-10 col-lg-6 col-xl-9 order-2 order-lg-1">
+                                    <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4 text-danger">Details</p>
+                                    <form class="mx-1 mx-md-4" action="/payment" method="post">
+                                        <h4>From</h4>
+                                        <div class=" bg-light text-wrap w-100 w-75 form-control mb-3 ">
+                                            <%=From %>
+                                        </div>
+                                        <h4>To</h4>
+                                        <div class=" bg-light text-wrap w-75  w-100  form-control mb-3">
+                                            <%=To%>
+                                        </div>
+                                        <h4>Rupees ₹</h4>
+                                        <div id="payamount" id="payamount"
+                                            class=" bg-light text-wrap w-75   w-100 form-control mb-3">
+                                            <%=Amount%>
+                                        </div>
+                                        <div class="d-flex justify-content-center mx-auto mb-3 mt-4 mb-lg-4">
+                                            <button type="submit" class="btn btn-danger btn-lg m-3"
+                                                id="rzp-button1">Pay </button>
+                                                <button class="btn btn-danger btn-lg m-3"><a class="nav-link text-white "  href="/home">Back</a></button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    </section>
+
+    <script>
+        let money = Number(document.getElementById("payamount").innerHTML) * 100;
+
+        
+        var orderId;
+        $(document).ready(function () {
+            var settings = {
+                "url": "/create/orderId",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify({
+                    "amount": money
+                }),
+            };
+
+            //creates new orderId everytime
+            $.ajax(settings).done(function (response) {
+
+                orderId = response.orderId;
+                console.log(orderId);
+                $("button").show();
+            });
+        });
+
+        var options = {
+            "key": "rzp_test_hDQN9CGKETkpSU",
+            "amount": money,
+            "currency": "INR",
+            
+            "name": "Bus ticket",
+            "description": "Test Transaction",
+            //   "image": "https://example.com/your_logo",
+            "order_id": orderId,
+              "handler": function (response) {
+                // alert(response.razorpay_payment_id);
+                // alert(response.razorpay_order_id);
+                // alert(response.razorpay_signature);
+    
+                redirect_url = '/dashboard/'+response.razorpay_payment_id;
+                location.href = redirect_url;
+            },
+            "prefill": {
+                "name": "Lokesh",
+                "email": "sample123@gmail.com",
+                "contact": "8838396453"
+            },
+            "notes": {
+                "About": "Bus-Ticket "
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+
+
+        var rzp1 = new Razorpay(options);
+        rzp1.on('payment.failed', function (response) {
+            alert(response.error.code);
+            alert(response.error.description);
+            alert(response.error.source);
+            alert(response.error.step);
+            alert(response.error.reason);
+            alert(response.error.metadata.order_id);
+            alert(response.error.metadata.payment_id);
+        });
+
+        document.getElementById("rzp-button1").onclick = function (e) {
+            rzp1.open();
+
+            e.preventDefault();
+        }
+
+    </script>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <button id="rzp-button1">Pay</button>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script> -->
+<!-- <script>
+    var orderId;
+    $(document).ready(function () {
+        var settings = {
+            "url": "/create/orderId",
+            "method": "POST",
+            "timeout": 0,
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "data": JSON.stringify({
+                "amount": "5"
+            }),
+        };
+            //creates new orderId everytime
+                $.ajax(settings).done(function (response) {
+
+                    orderId = response.orderId;
+                    console.log(orderId);
+                    $("button").show();
+                });
+            });
+
+            document.getElementById('rzp-button1').onclick = function (e) {
+            var options = {
+                "key": "rzp_test_0ARWx2Pa8FDfdY", // Enter the Key ID generated from the Dashboard
+                "amount": "500", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                "currency": "INR",
+                "name": "Acme Corp",
+                "description": "Test Transaction",
+                "image": "https://example.com/your_logo",
+                "order_id": orderId, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                "handler": function (response) {
+                    alert(response.razorpay_payment_id);
+                    alert(response.razorpay_order_id);
+                    alert(response.razorpay_signature)
+                    var settings = {
+                        "url": "/api/payment/verify",
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {
+                            "Content-Type": "application/json"
+                        },
+                        "data": JSON.stringify({ response }),
+                    }
+    
+                
+            var rzp1 = new Razorpay(options);
+            rzp1.on('payment.failed', function (response) {
+                alert(response.error.code);
+                alert(response.error.description);
+                alert(response.error.source);
+                alert(response.error.step);
+                alert(response.error.reason);
+                alert(response.error.metadata.order_id);
+                alert(response.error.metadata.payment_id);
+            });
+        
+        
+            rzp1.open();
+            e.preventDefault();
+    
+    }
+    }};
+
+</script> -->

@@ -34,7 +34,7 @@ var instance = new Razorpay({
 
 //DB
 const UserSchema = {
-    name: {type:String,required:true},
+    name: String,
     email: String,
     password: String 
 };
@@ -192,6 +192,9 @@ app.get("/dashboard",function(req,res){
 })
 
 
+app.post("/",function(req,res){
+    res.render("start");
+})
 
 
 app.get("/",function(req,res){
